@@ -1,0 +1,24 @@
+<?php         
+$this->title = "Jueces";
+$this->headTitle($this->title);
+?>
+<table class="table  table-striped">
+<tr>
+    <th>Nombre</th>
+    <th>Email</th>
+    <th>&nbsp;</th>
+</tr>
+<?php 
+
+foreach($this->judges as $judge) : 
+?>
+<tr>
+    <td><?php echo $this->escape($judge["user_name"]);?></td>
+    <td><?php echo $this->escape($judge["email"]);?></td>
+    <td>
+        <a href="<?php echo $this->url(array('controller'=>'judges', 
+            'action'=>'linkfestivals', 'id'=>$judge["uid"]));?>">Ver sus festivales</a>        
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>

@@ -1,11 +1,11 @@
 <?php
 
-class Application_Model_DbTable_Users extends Zend_Db_Table_Abstract
+class Application_Model_DbTable_Festivals extends Zend_Db_Table_Abstract
 {
 
-    protected $_name = 'acl_users';
+    protected $_name = 'festivals';
 
-    public function getUser($id)
+    public function getFestival($id)
     {
         $id = (int)$id;
         $row = $this->fetchRow('id = ' . $id);
@@ -14,15 +14,7 @@ class Application_Model_DbTable_Users extends Zend_Db_Table_Abstract
         }
         return $row->toArray();
     }
-    public function getUserByRol($role_id)
-    {
-    	$role_id = (int)$role_id;
-    	$row = $this->fetchAll('role_id = ' . $role_id);
-    	if (!$row) {
-    		throw new Exception("Could not find row $id");
-    	}
-    	return $row->toArray();
-    }
+   
     public function addUser($artist, $title)
     {
         $data = array(

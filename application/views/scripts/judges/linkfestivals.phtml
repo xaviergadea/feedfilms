@@ -1,0 +1,25 @@
+<?php         
+$this->title = "Festivales";
+$this->headTitle($this->title);
+?>
+<table class="table  table-striped">
+<tr>
+    <th>Nombre</th>
+    <th>Ciudad</th>
+    <th>Edición</th>
+    <th>&nbsp;</th>
+</tr>
+<?php 
+
+//foreach($this->festivals as $festivals) : 
+?>
+<tr>
+    <td><?php //echo $this->escape($festivals->name);?></td>
+    <td><?php //echo $this->escape($festivals->location);?></td>
+    <td><?php //echo $this->escape($festivals->edition);?></td>
+    <td>
+       <?php echo $this->form ;?>     
+    </td>
+</tr>
+<?php //endforeach; ?>
+</table>
