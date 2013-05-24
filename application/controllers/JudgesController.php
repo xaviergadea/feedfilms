@@ -7,12 +7,20 @@ class JudgesController extends Zend_Controller_Action
     {
         /* Initialize action controller here */ 
     	$this->_helper->layout->setLayout('backend');
+    	
+    	/* Initialize contextSwitch to use Ajax delete judge from film */
+    	
+    	/*
+    	$contextSwitch = $this->_helper->getHelper('contextSwitch');
+    	$contextSwitch->addActionContext('linkfestivalsdelete', 'json')
+    	->addActionContext('linkfestivalsadd', 'json')
+    	->initContext();*/
     }
 
     public function indexAction()
     {
         $judges = new Application_Model_DbTable_Users();
-        $rows=$judges->getUserByRol(2);       
+        $rows=$judges->getUserByRol(21);       
         $this->view->judges = $rows;
     }
 	public function linkfestivalsAction()
@@ -20,29 +28,49 @@ class JudgesController extends Zend_Controller_Action
 		$festivals = new Application_Model_DbTable_Festivals();
 		$this->view->festivals = $festivals->fetchAll();
 		
-		$form = new Application_Form_linkfestivals($this->view->festivals);
+		$UsersHasFestivals = new Application_Model_DbTable_Usershasfestivals();
+		$this->view->usershasfestivals = $UsersHasFestivals->getFestivalsOfUser($this->_getParam('id', 0));
+		//print_r($this->view->usershasfestivals);
+		$this->view->id_judge = $this->_getParam('id', 0);
+		//$form = new Application_Form_linkfestivals($this->view->festivals);
 		//$form->submit->setLabel('Ok');
-		$this->view->form = $form;				
+		//$this->view->form = $form;
 	}
-    public function addAction()
+	
+	public function linkfestivalsdeleteAction()
+	{
+		if ($this->getRequest()->isPost()) {
+			$del = $this->getRequest()->getPost('del');
+			if ($del == 'Yes') {
+				$id = $this->getRequest()->getPost('id');
+				$id_festival = $this->getRequest()->getPost('id_festival');
+				$festival = new Application_Model_DbTable_Usershasfestivals();
+				$festival->deleteUserInFestival($id,$id_festival);
+				
+				$this->_redirect('/judges/linkfestivals/id/'.$id);
+				//$this->_helper->json("ok");
+			}
+			
+		} else {
+			$this->view->id = $this->_getParam('id', 0);
+			$this->view->id_festival = $this->_getParam('id_festival', 0);
+			$festivals = new Application_Model_DbTable_Festivals();
+			$this->view->festivals = $festivals->getFestival($this->view->id_festival);
+			
+		}
+		
+	}
+    public function linkfestivalsaddAction()
     {
-        $form = new Application_Form_Album();
-        $form->submit->setLabel('Add');
-        $this->view->form = $form;
-        
-        if ($this->getRequest()->isPost()) {
-            $formData = $this->getRequest()->getPost();
-            if ($form->isValid($formData)) {
-                $artist = $form->getValue('artist');
-                $title = $form->getValue('title');
-                $albums = new Application_Model_DbTable_Albums();
-                $albums->addAlbum($artist, $title);
-                
-                $this->_helper->redirector('index');
-            } else {
-                $form->populate($formData);
-            }
-        }
+       
+		$id = $this->_getParam('id', 0);
+		$id_festival = $this->_getParam('id_festival', 0);
+        $festival = new Application_Model_DbTable_Usershasfestivals();
+		$festival->addUserInFestival($id,$id_festival);
+		$params = array('id' => $id);
+		$this->_redirect('/judges/linkfestivals/id/'.$id);
+		   
+		//$this->_helper->json("ok");
             
     }
 

@@ -13,11 +13,11 @@ $this->headTitle($this->title);
 foreach($this->judges as $judge) : 
 ?>
 <tr>
-    <td><?php echo $this->escape($judge["user_name"]);?></td>
+    <td><?php echo $this->escape($judge["name"]);?></td>
     <td><?php echo $this->escape($judge["email"]);?></td>
     <td>
         <a href="<?php echo $this->url(array('controller'=>'judges', 
-            'action'=>'linkfestivals', 'id'=>$judge["uid"]));?>">Ver sus festivales</a>        
+            'action'=>'linkfestivals', 'id'=>$judge["id_user"]));?>">Ver sus festivales</a>        
     </td>
 </tr>
 <?php endforeach; ?>

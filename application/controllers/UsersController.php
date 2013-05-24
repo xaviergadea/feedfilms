@@ -3,91 +3,147 @@
 class UsersController extends Zend_Controller_Action
 {
 
-	public function init()
-	{
-		/* Initialize action controller here */
-	}
+    public function init()
+    {
+        /* Initialize action controller here */
+    	$this->_helper->layout->setLayout('backend');
+    }
 
-	public function indexAction()
-	{
-		$albums = new Application_Model_DbTable_Users();
-		$this->view->albums = $albums->fetchAll();
-	}
+    public function indexAction()
+    {
+        $users = new Application_Model_DbTable_Users();
+        $this->view->users = $users->fetchAll();
+    }
+    
+    public function addAction()
+    {
+    	$model = new Application_Model_User();
+    	$form = new Application_Form_User();     
+        $form->submit->setLabel('Add');        
+        $this->view->form = $form;
+        $form->photo->setValueDisabled(true);
+        
+        if ($this->getRequest()->isPost()) {
+//         	if(!$form->getValue('photo'))
+//         		$newname='';
+//         	else {
+        		$newname=$model->renameImage($form->getValue('photo'));
+        		$form->photo->setValue($newname);
+//         	}
+        	
+        	$formData = $this->getRequest()->getPost();
+        	if ($form->isValid($formData)) {
+        	    
+        		$name = $form->getValue('name');
+        		$email = $form->getValue('email');
+        		$password = $form->getValue('password');
+        		$phone = $form->getValue('phone');
+        		$description = $form->getValue('description');
+        		$rol = $form->getValue('acl_roles_id_rol');
+        		
+        		$form->photo->addfilter('Rename', $newname);
+        		if (!$form->photo->receive())
+        		{
+        			print "Upload error";
+        		}
+        		$photo = $newname;
+        		        		
+//         		$user = new Application_Model_User();
+//         		$user->setName($name);
+//         		$user->setEmail($email);
+//         		$user->setPassword($password);
+        		        		
+        		$users = new Application_Model_DbTable_Users();          		  
+        		$users->addUser($name, $email, $password, $description,
+        		        $photo, $rol
+        		        	);
+        		        	
+        		$this->_helper->redirector('index');
+        	} else {
+        		$form->populate($formData);
+        	}
+        }
+    }
+    
+    public function editAction()
+    {
+        $form = new Application_Form_User();
+        $model = new Application_Model_User();
+        
+        $form->submit->setLabel('Save');
+        $form->removeElement('password');
+        
+        $this->view->form = $form;
+        $this->view->title = "Editar Usuario";
+        $form->photo->setValueDisabled(true);
+        
+        if ($this->getRequest()->isPost()) {
+        	$formData = $this->getRequest()->getPost();
+        	$newname=$model->renameImage($form->getValue('photo'));
+        	$form->photo->setValue($newname);
+        	
+        	if ($form->isValid($formData)) {
+        	    
+        	    $iduser =  $form->getValue('id_user');
+        		$name = $form->getValue('name');
+        		$email = $form->getValue('email');
+        		$password = $form->getValue('password');
+        		$phone = $form->getValue('phone');
+        		$description = $form->getValue('description');
+        		$rol = $form->getValue('acl_roles_id_rol');
+        		
+        		$form->photo->addfilter('Rename', $newname);
+        		if (!$form->photo->receive())
+        		{
+        			print "Upload error";
+        		}
+        		$photo = $newname;
+        		
+//         		$user = new Application_Model_User();
+//         		$user->setIduser($iduser);
+//         		$user->setName($name);
+//         		$user->setEmail($email);
+//         		$user->setPassword($password);
+        		
+        		$users = new Application_Model_DbTable_Users();
+//         		$users->updateUser($user);
+        		$users->updateUser($iduser,$name, $email, $password, $description,
+        		        $photo, $rol
+        		        	);
 
-	public function addAction()
-	{
-		$form = new Application_Form_User(); 
-		$form->submit->setLabel('Add');
-		$this->view->form = $form;
-
-		if ($this->getRequest()->isPost()) {
-			$formData = $this->getRequest()->getPost();
-			if ($form->isValid($formData)) {
-				$artist = $form->getValue('artist');
-				$title = $form->getValue('title');
-				$albums = new Application_Model_DbTable_Users();
-				$albums->addUser($artist, $title);
-
-				$this->_helper->redirector('index');
-			} else {
-				$form->populate($formData);
-			}
-		}
-
-	}
-
-	public function editAction()
-	{
-		$form = new Application_Form_User();
-		$form->submit->setLabel('Save');
-		$this->view->form = $form;
-
-		if ($this->getRequest()->isPost()) {
-			$formData = $this->getRequest()->getPost();
-			if ($form->isValid($formData)) {
-				$id = (int)$form->getValue('id');
-				$artist = $form->getValue('artist');
-				$title = $form->getValue('title');
-				$albums = new Application_Model_DbTable_Users();
-				$albums->updateAlbum($id, $artist, $title);
-
-				$this->_helper->redirector('index');
-			} else {
-				$form->populate($formData);
-			}
-		} else {
-			$id = $this->_getParam('id', 0);
-			if ($id > 0) {
-				$albums = new Application_Model_DbTable_Users();
-				$form->populate($albums->getAlbum($id));
-			}
-		}
-
-	}
-
-	public function deleteAction()
-	{
-		if ($this->getRequest()->isPost()) {
-			$del = $this->getRequest()->getPost('del');
-			if ($del == 'Yes') {
-				$id = $this->getRequest()->getPost('id');
-				$albums = new Application_Model_DbTable_Users();
-				$albums->deleteAlbum($id);
-			}
-			$this->_helper->redirector('index');
-		} else {
-			$id = $this->_getParam('id', 0);
-			$albums = new Application_Model_DbTable_Users();
-			$this->view->album = $albums->getAlbum($id);
-		}
-	}
+        		
+        		$this->_helper->redirector('index');
+        	} else {
+        		$form->populate($formData);
+        	}
+        } else {
+        	$id = $this->_getParam('id', 0);
+        	if ($id > 0) {
+        		$users = new Application_Model_DbTable_Users();
+        		$form->populate($users->getUser($id));
+        	}
+        }
+    }
+    
+    public function deleteAction()
+    {
+        if ($this->getRequest()->isPost())
+        {
+        	$del = $this->getRequest()->getPost('del');
+        	if ($del == 'Yes') 
+        	{
+        		$iduser = $this->getRequest()->getPost('ids');
+        		$users = new Application_Model_DbTable_Users();
+        		$users->deleteUser($iduser);
+        	}
+        	$this->_helper->redirector('index');
+        } else 
+        {
+        	$iduser = $this->_getParam('idusers', 0);
+        	$users = new Application_Model_DbTable_Users();
+        	$this->view->user = $users->getUser($iduser);
+        }
+    }
 
 
 }
-
-
-
-
-
-
-

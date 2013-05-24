@@ -15,25 +15,19 @@ class Application_Model_DbTable_Festivals extends Zend_Db_Table_Abstract
         return $row->toArray();
     }
    
-    public function addUser($artist, $title)
+    public function addFestival($data)
     {
-        $data = array(
-            'artist' => $artist,
-            'title' => $title,
-        );
+    	unset($data["submit"]);
         $this->insert($data);
     }
 
-    public function updateUser($id, $artist, $title)
+    public function updateFestival($id, $data)
     {
-        $data = array(
-            'artist' => $artist,
-            'title' => $title,
-        );
-        $this->update($data, 'id = '. (int)$id);
+       unset($data["submit"]);
+       $this->update($data, 'id = '. (int)$id);
     }
 
-    public function deleteUser($id)
+    public function deleteFestival($id)
     {
         $this->delete('id =' . (int)$id);
     }

@@ -1,0 +1,24 @@
+
+<p><a href="<?php echo $this->url(array('controller'=>'festivals', 
+        'action'=>'add'));?>">Add new festival</a></p>
+<table class="table  table-striped">
+<tr>
+    <th>Name</th>
+    <th>Edition</th>
+    <th>Locality</th>
+    <th></th>
+</tr>
+<?php foreach($this->festivals as $item) : ?>
+<tr>
+    <td><?php echo $this->escape($item->name);?></td>
+    <td><?php echo $this->escape($item->edition);?></td>
+    <td><?php echo $this->escape($item->location);?></td>
+    <td>
+        <a href="<?php echo $this->url(array('controller'=>'festivals', 
+            'action'=>'edit', 'id'=>$item->id));?>">Edit</a>
+        <a href="<?php echo $this->url(array('controller'=>'festivals', 
+            'action'=>'delete', 'id'=>$item->id));?>">Delete</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>

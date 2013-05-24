@@ -15,6 +15,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     	$front->setParam('registry', $this->getContainer());
     }
     
+	protected function _initConfig()
+    {
+        $config = new Zend_Config_Ini(
+                APPLICATION_PATH.'/configs/application.ini',
+                APPLICATION_ENV);
+        Zend_Registry::set('uploadDirectory', $config->uploadDirectory);        
+    }
     /**
      * Bootstrap the view
      *
@@ -31,10 +38,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     	$view->headTitle('');
     
     	// Enable dojo on layout
-    	$view->addHelperPath('Zend/Dojo/View/Helper/', 'Zend_Dojo_View_Helper');
-    	$view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper_NavMenu');
-    	$view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper_AclLink');
-    	$view->addHelperPath(APPLICATION_PATH . '/views/helpers', 'Zend_View_Helper_AdminTemplateDir');
+    	$view->addHelperPath('/helps/Form/Element', 'Zend_View_Helps_Form_Element');
     	$view->addBasePath(APPLICATION_PATH . '/views');
     
     	// Return it, so that it can be stored by the bootstrap

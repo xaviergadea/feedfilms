@@ -1,7 +1,3 @@
-<?php         
-$this->title = "Festivales";
-$this->headTitle($this->title);
-?>
 <table class="table  table-striped">
 <tr>
     <th>Nombre</th>
@@ -10,16 +6,36 @@ $this->headTitle($this->title);
     <th>&nbsp;</th>
 </tr>
 <?php 
-
-//foreach($this->festivals as $festivals) : 
+function UserHasThisFestival($festival,$data)
+{
+	foreach ($data as $pair):
+		if (in_array($festival, $data)):
+			return true;
+			break;
+		endif;
+	endforeach;
+	return false;
+}
+foreach($this->festivals as $festivals) : 
 ?>
 <tr>
-    <td><?php //echo $this->escape($festivals->name);?></td>
-    <td><?php //echo $this->escape($festivals->location);?></td>
-    <td><?php //echo $this->escape($festivals->edition);?></td>
+    <td><?php echo $this->escape($festivals->name);?></td>
+    <td><?php echo $this->escape($festivals->location);?></td>
+    <td><?php echo $this->escape($festivals->edition);?></td>
     <td>
-       <?php echo $this->form ;?>     
+    <?php //if ($this->controller->UserHasThisFestival($festival->id,$this->usershasfestivals)):?>
+       <?php if (UserHasThisFestival($festivals->id,$this->usershasfestivals)): ?> 
+		       <a href="<?php echo $this->url(array('controller'=>'judges', 
+		            'action'=>'linkfestivalsdelete', 'id'=>$this->id_judge,'id_festival'=>$festivals->id),null,true);?>">
+		       		Desactivar
+		       </a> 
+       <?php else: ?>
+       		<a href="<?php echo $this->url(array('controller'=>'judges', 
+		            'action'=>'linkfestivalsadd', 'id'=>$this->id_judge,'id_festival'=>$festivals->id),null,true);?>">
+		       		Activar
+		       </a> 
+       <?php endif;?>    
     </td>
 </tr>
-<?php //endforeach; ?>
+<?php endforeach; ?>
 </table>
